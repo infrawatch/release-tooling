@@ -6,7 +6,7 @@ REPLACE_REGEX="${REPLACE_REGEX}:-s#<<CREATED_DATE>>#${CREATED_DATE}#g;s#<<OPERAT
 RELATED_IMAGE_REGEX="${RELATED_IMAGE_REGEX}:-"
 
 # shellcheck source=build/metadata.sh
-. "${REL}/metadata.sh"
+. "${REL}/../../build/metadata.sh"
 
 generate_version() {
     echo "-- Generating operator version"
