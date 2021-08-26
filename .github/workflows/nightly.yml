@@ -30,6 +30,12 @@ jobs:
       - name: Move operator-sdk binary
         run: sudo mv operator-sdk /usr/local/bin
 
+      - name: Make opm executable
+        run: chmod +x opm
+
+      - name: Move opm binary
+        run: sudo mv opm /usr/local/bin
+
       - name: Get Smart Gateway Operator
         uses: actions/checkout@v2
         with:
