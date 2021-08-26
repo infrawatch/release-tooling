@@ -14,7 +14,7 @@ jobs:
     steps:
 
       - name: Install shellcheck
-        run: apt-get install -y shellcheck
+        run: sudo apt-get install -y shellcheck
 
       - name: Checkout code
         uses: actions/checkout@v2
