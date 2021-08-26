@@ -68,14 +68,14 @@ done
 echo "-- Build and push Smart Gateway Operator bundle image"
 pushd "${SGO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
-SGO_BUNDLE_IMAGE_HASH=$(docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p')
+SGO_BUNDLE_IMAGE_HASH=$(docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p' | tr -d '[:space:]')
 popd || exit
 
 
 echo "-- Build and push Service Telemetry Operator bundle image"
 pushd "${STO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
-STO_BUNDLE_IMAGE_HASH=$(docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p')
+STO_BUNDLE_IMAGE_HASH=$(docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p' | tr -d '[:space:]')
 popd || exit
 
 echo "-- Build and push index image"
