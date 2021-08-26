@@ -1,0 +1,60 @@
+name: Nightly Builds
+on:
+  schedule:
+    - cron: '11 1 * * *'
+
+jobs:
+  periodic_release:
+    name: Periodic Release
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Get operator-sdk
+        run: curl --output operator-sdk -JL https://github.com/operator-framework/operator-sdk/releases/download/$RELEASE_VERSION/operator-sdk-$RELEASE_VERSION-x86_64-linux-gnu
+        env:
+          RELEASE_VERSION: v0.19.4
+
+      - name: Get opm
+        run: curl --output opm -JL https://github.com/operator-framework/operator-registry/releases/download/$RELEASE_VERSION/linux-amd64-opm
+        env:
+          RELEASE_VERSION: v1.18.0
+
+      - name: Install jq
+        run: sudo apt-get install -y jq sed
+
+      - name: Make operator-sdk executable
+        run: chmod +x operator-sdk
+
+      - name: Move operator-sdk binary
+        run: sudo mv operator-sdk /usr/local/bin
+
+      - name: Make opm executable
+        run: chmod +x opm
+
+      - name: Move opm binary
+        run: sudo mv opm /usr/local/bin
+
+      - name: Get Smart Gateway Operator
+        uses: actions/checkout@v2
+        with:
+          repository: infrawatch/smart-gateway-operator
+          path: smart-gateway-operator
+
+      - name: Get Service Telemetry Operator
+        uses: actions/checkout@v2
+        with:
+          repository: infrawatch/service-telemetry-operator
+          path: service-telemetry-operator
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: release-automation
+
+      - name: Run release builder
+        run: ${{ github.workspace }}/release-automation/releaser.sh
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          QUAY_INFRAWATCH_OPERATORS_USERNAME: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_USERNAME }}
+          QUAY_INFRAWATCH_OPERATORS_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_PASSWORD }}
+
