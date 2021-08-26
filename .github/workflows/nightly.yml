@@ -1,7 +1,5 @@
 name: Nightly Builds
 on:
-  push:
-  pull_request:
   schedule:
     - cron: '0 * * * *'
 
