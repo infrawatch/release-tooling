@@ -46,10 +46,11 @@ PROMETHEUS_WEBHOOK_SNMP_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/
 echo "## Prometheus webhook SNMP image hash: ${PROMETHEUS_WEBHOOK_SNMP_IMAGE_HASH}"
 
 echo "-- Create Service Telemetry Operator bundle"
-STO_BUNDLE_RESULT_DIR=${GITHUB_WORKSPACE}/sto-bundle/
 pushd "${GITHUB_WORKSPACE}/service-telemetry-operator/" || exit
 mkdir "${STO_BUNDLE_RESULT_DIR}"
+pwd ; ls -lah
 WORKING_DIR=${STO_BUNDLE_RESULT_DIR} ./build/generate_bundle.sh
+ls -lah "${STO_BUNDLE_RESULT_DIR}"
 popd || exit
 
 echo "-- Replace tag with hash for image paths for Service Telemetry Operator"
