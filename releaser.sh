@@ -10,6 +10,7 @@ SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
 SGO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/smart-gateway-operator-bundle
 STO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/service-telemetry-operator-bundle
+INDEX_IMAGE_PATH=quay.io/infrawatch-operators/infrawatch-catalog
 
 echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
 echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
@@ -68,6 +69,8 @@ echo "-- Build and push Smart Gateway Operator bundle image"
 pushd "${SGO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
 docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
+sleep 15 # give quay.io a minute to cache or whatever
+SGO_BUNDLE_IMAGE_HASH=$(skopeo inspect docker://"${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
 popd || exit
 
 
@@ -75,7 +78,10 @@ echo "-- Build and push Service Telemetry Operator bundle image"
 pushd "${STO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
 docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
+sleep 15 # give quay.io a minute to cache or whatever
+STO_BUNDLE_IMAGE_HASH=$(skopeo inspect docker://"${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
 popd || exit
 
 echo "-- Build and push index image"
-
+opm index add --build-tool docker --container-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:nightly" --tag "${INDEX_IMAGE_PATH}:nightly" || exit
+docker push "${INDEX_IMAGE_PATH}:nightly" || exit
