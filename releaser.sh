@@ -83,5 +83,5 @@ STO_BUNDLE_IMAGE_HASH=$(skopeo inspect docker://"${STO_BUNDLE_IMAGE_PATH}:${BUND
 popd || exit
 
 echo "-- Build and push index image"
-opm index add --build-tool docker --container-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:nightly" --tag "${INDEX_IMAGE_PATH}:nightly" || exit
+opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:nightly" --tag "${INDEX_IMAGE_PATH}:nightly" || exit
 docker push "${INDEX_IMAGE_PATH}:nightly" || exit
