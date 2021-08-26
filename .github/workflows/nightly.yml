@@ -42,25 +42,16 @@ jobs:
           repository: infrawatch/smart-gateway-operator
           path: smart-gateway-operator
 
-      - name: DEBUG pwd and sources
-        run: pwd ; ls -lah
-
       - name: Get Service Telemetry Operator
         uses: actions/checkout@v2
         with:
           repository: infrawatch/service-telemetry-operator
           path: service-telemetry-operator
 
-      - name: DEBUG pwd and sources
-        run: pwd ; ls -lah
-
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           path: release-automation
-
-      - name: DEBUG pwd and sources
-        run: pwd ; ls -lah
 
       - name: Run release builder
         run: ${{ github.workspace }}/release-automation/releaser.sh
