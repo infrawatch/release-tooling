@@ -68,18 +68,14 @@ done
 echo "-- Build and push Smart Gateway Operator bundle image"
 pushd "${SGO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
-docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
-sleep 15 # give quay.io a minute to cache or whatever
-SGO_BUNDLE_IMAGE_HASH=$(skopeo inspect docker://"${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
+SGO_BUNDLE_IMAGE_HASH=$(docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p')
 popd || exit
 
 
 echo "-- Build and push Service Telemetry Operator bundle image"
 pushd "${STO_BUNDLE_RESULT_DIR}" || exit
 docker build --tag "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
-docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
-sleep 15 # give quay.io a minute to cache or whatever
-STO_BUNDLE_IMAGE_HASH=$(skopeo inspect docker://"${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
+STO_BUNDLE_IMAGE_HASH=$(docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | sed -n -e 's/^.*\(sha256:.*\)\(size.*\)$/\1/p')
 popd || exit
 
 echo "-- Build and push index image"
