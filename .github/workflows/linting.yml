@@ -1,0 +1,23 @@
+name: Linting
+  on:
+    push:
+      paths:
+        - '**.sh'
+    pull_request:
+      paths:
+        - '**.sh'
+
+jobs:
+  shellcheck:
+    name: Shellcheck scripts
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Install shellcheck
+        run: apt-get install -y shellcheck
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run shellcheck
+        run: shellcheck *.sh
