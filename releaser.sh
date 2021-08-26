@@ -10,7 +10,7 @@ SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
 
 # login to quay.io registry so we can push bundles to infrawatch-operators organization
-docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" -p="${QUAY_INFRAWATCH_OPERATORS_PASSWORD}"
+echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
 # Smart Gateway Operator bundle creation
 echo "-- Get Smart Gateway Operator image hash"
