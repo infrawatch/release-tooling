@@ -9,6 +9,9 @@ BUNDLE_TAG=${BUNDLE_TAG:-nightly-head}
 SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
 
+echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
+echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
+
 # login to quay.io registry so we can push bundles to infrawatch-operators organization
 echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
@@ -28,11 +31,10 @@ mkdir "${SGO_BUNDLE_RESULT_DIR}"
 WORKING_DIR=${SGO_BUNDLE_RESULT_DIR} ./build/generate_bundle.sh
 popd || exit
 
-echo "-- Replace tag with hash for image paths"
+echo "-- Replace tag with hash for image paths in Smart Gateway Operator"
 sed -i "s#quay.io/infrawatch/smart-gateway-operator:${INSPECTION_TAG}#quay.io/infrawatch/smart-gateway-operator@${SG_OPERATOR_IMAGE_HASH}#g" "${SGO_BUNDLE_RESULT_DIR}/manifests/smart-gateway-operator.clusterserviceversion.yaml"
 sed -i "s#quay.io/infrawatch/sg-core:${INSPECTION_TAG}#quay.io/infrawatch/sg-core@${SG_CORE_IMAGE_HASH}#g" "${SGO_BUNDLE_RESULT_DIR}/manifests/smart-gateway-operator.clusterserviceversion.yaml"
 sed -i "s#quay.io/infrawatch/sg-bridge:${INSPECTION_TAG}#quay.io/infrawatch/sg-bridge@${SG_BRIDGE_IMAGE_HASH}#g" "${SGO_BUNDLE_RESULT_DIR}/manifests/smart-gateway-operator.clusterserviceversion.yaml"
-cat "${SGO_BUNDLE_RESULT_DIR}/manifests/smart-gateway-operator.clusterserviceversion.yaml"
 
 # Service Telemetry Operator bundle creation
 echo "-- Get Service Telemetry Operator image hash"
@@ -50,7 +52,7 @@ mkdir "${STO_BUNDLE_RESULT_DIR}"
 WORKING_DIR=${STO_BUNDLE_RESULT_DIR} ./build/generate_bundle.sh
 popd || exit
 
-echo "-- Replace tag with hash for image paths"
+echo "-- Replace tag with hash for image paths for Service Telemetry Operator"
 sed -i "s#quay.io/infrawatch/service-telemetry-operator:${INSPECTION_TAG}#quay.io/infrawatch/service-telemetry-operator@${ST_OPERATOR_IMAGE_HASH}#g" "${STO_BUNDLE_RESULT_DIR}/manifests/service-telemetry-operator.clusterserviceversion.yaml"
 sed -i "s#quay.io/infrawatch/prometheus-webhook-snmp:${INSPECTION_TAG}#quay.io/infrawatch/prometheus-webhook-snmp@${PROMETHEUS_WEBHOOK_SNMP_IMAGE_HASH}#g" "${STO_BUNDLE_RESULT_DIR}/manifests/service-telemetry-operator.clusterserviceversion.yaml"
 
