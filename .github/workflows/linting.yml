@@ -1,11 +1,11 @@
 name: Linting
-  on:
-    push:
-      paths:
-        - '**.sh'
-    pull_request:
-      paths:
-        - '**.sh'
+on:
+  push:
+    paths:
+      - '**.sh'
+  pull_request:
+    paths:
+      - '**.sh'
 
 jobs:
   shellcheck:
