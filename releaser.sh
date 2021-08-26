@@ -8,6 +8,8 @@ INSPECTION_TAG=${INSPECTION_TAG:-latest}
 BUNDLE_TAG=${BUNDLE_TAG:-nightly-head}
 SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
+SGO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/smart-gateway-operator-bundle
+STO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/service-telemetry-operator-bundle
 
 echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
 echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
@@ -48,15 +50,12 @@ echo "## Prometheus webhook SNMP image hash: ${PROMETHEUS_WEBHOOK_SNMP_IMAGE_HAS
 echo "-- Create Service Telemetry Operator bundle"
 pushd "${GITHUB_WORKSPACE}/service-telemetry-operator/" || exit
 mkdir "${STO_BUNDLE_RESULT_DIR}"
-pwd ; ls -lah
 WORKING_DIR=${STO_BUNDLE_RESULT_DIR} ./build/generate_bundle.sh
-ls -lah "${STO_BUNDLE_RESULT_DIR}"
 popd || exit
 
 echo "-- Replace tag with hash for image paths for Service Telemetry Operator"
 sed -i "s#quay.io/infrawatch/service-telemetry-operator:${INSPECTION_TAG}#quay.io/infrawatch/service-telemetry-operator@${ST_OPERATOR_IMAGE_HASH}#g" "${STO_BUNDLE_RESULT_DIR}/manifests/service-telemetry-operator.clusterserviceversion.yaml"
 sed -i "s#quay.io/infrawatch/prometheus-webhook-snmp:${INSPECTION_TAG}#quay.io/infrawatch/prometheus-webhook-snmp@${PROMETHEUS_WEBHOOK_SNMP_IMAGE_HASH}#g" "${STO_BUNDLE_RESULT_DIR}/manifests/service-telemetry-operator.clusterserviceversion.yaml"
-
 
 # -- Validate, build, and push bundles
 echo "-- Validate bundles"
@@ -67,17 +66,16 @@ done
 
 echo "-- Build and push Smart Gateway Operator bundle image"
 pushd "${SGO_BUNDLE_RESULT_DIR}" || exit
-pwd ; ls -lah
-docker build --tag "quay.io/infrawatch-operators/smart-gateway-operator-bundle:${BUNDLE_TAG}" --file Dockerfile .
+docker build --tag "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
+docker push "${SGO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
 popd || exit
 
 
 echo "-- Build and push Service Telemetry Operator bundle image"
 pushd "${STO_BUNDLE_RESULT_DIR}" || exit
-pwd ; ls -lah
-docker build --tag "quay.io/infrawatch-operators/service-telemetry-operator-bundle:${BUNDLE_TAG}" --file Dockerfile .
-# docker push
+docker build --tag "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" --file Dockerfile .
+docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}"
 popd || exit
 
 echo "-- Build and push index image"
-# opm stuff
+
