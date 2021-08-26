@@ -42,7 +42,7 @@ jobs:
       - name: Get Service Telemetry Operator
         uses: actions/checkout@v2
         with:
-          repository: infrawatch/smart-gateway-operator
+          repository: infrawatch/service-telemetry-operator
           path: service-telemetry-operator
 
       - name: DEBUG pwd and sources
