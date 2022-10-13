@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set +x
 
-# WARNING: this script is used by the automation and isn't necessary designed to be consumed directly.
+# WARNING: this script is used by the GitHub Actions automation and isn't necessarily designed to be consumed directly.
 
 # set defaults that can be overridden
 INSPECTION_TAG=${INSPECTION_TAG:-latest}
@@ -19,6 +19,8 @@ echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
 echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
 # Smart Gateway Operator bundle creation
+
+# -- Get hashes for images so they can be replaced in the bundle manifest for relatedImages
 echo "-- Get Smart Gateway Operator image hash"
 SG_OPERATOR_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/smart-gateway-operator:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
 
@@ -40,6 +42,8 @@ sed -i "s#quay.io/infrawatch/sg-core:${INSPECTION_TAG}#quay.io/infrawatch/sg-cor
 sed -i "s#quay.io/infrawatch/sg-bridge:${INSPECTION_TAG}#quay.io/infrawatch/sg-bridge@${SG_BRIDGE_IMAGE_HASH}#g" "${SGO_BUNDLE_RESULT_DIR}/manifests/smart-gateway-operator.clusterserviceversion.yaml"
 
 # Service Telemetry Operator bundle creation
+
+# -- Get hashes for images so they can be replaced in the bundle manifest for relatedImages
 echo "-- Get Service Telemetry Operator image hash"
 ST_OPERATOR_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/service-telemetry-operator:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
 echo "## Service telemetry operator image hash: ${ST_OPERATOR_IMAGE_HASH}"
