@@ -11,6 +11,7 @@ STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
 SGO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/smart-gateway-operator-bundle
 STO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/service-telemetry-operator-bundle
 INDEX_IMAGE_PATH=quay.io/infrawatch-operators/infrawatch-catalog
+INDEX_IMAGE_TAG=${INDEX_IMAGE_TAG:-nightly}
 
 echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
 echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
@@ -83,5 +84,5 @@ STO_BUNDLE_IMAGE_HASH=$(docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | s
 popd || exit
 
 echo "-- Build and push index image"
-opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:nightly" --tag "${INDEX_IMAGE_PATH}:nightly" || exit
-docker push "${INDEX_IMAGE_PATH}:nightly" || exit
+opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" --tag "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit
+docker push "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit

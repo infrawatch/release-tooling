@@ -114,3 +114,6 @@ jobs:
           GITHUB_WORKSPACE: ${{ github.workspace }}
           QUAY_INFRAWATCH_OPERATORS_USERNAME: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_USERNAME }}
           QUAY_INFRAWATCH_OPERATORS_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_PASSWORD }}
+          BUNDLE_TAG: "stable-1.5"
+          INSPECTION_TAG: "stable-1.5"
+          INDEX_IMAGE_TAG: "nightly-1.5"
