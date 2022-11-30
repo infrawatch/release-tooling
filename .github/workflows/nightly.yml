@@ -62,8 +62,6 @@ jobs:
   periodic_release_1_5:
     name: Periodic Release for STF 1.5
     runs-on: ubuntu-20.04
-    env:
-      WORKING_BRANCH: stable-1.5
 
     steps:
       - name: Get operator-sdk
@@ -96,14 +94,14 @@ jobs:
         with:
           repository: infrawatch/smart-gateway-operator
           path: smart-gateway-operator
-          ref: $WORKING_BRANCH
+          ref: stable-1.5
 
       - name: Get Service Telemetry Operator
         uses: actions/checkout@v2
         with:
           repository: infrawatch/service-telemetry-operator
           path: service-telemetry-operator
-          ref: $WORKING_BRANCH
+          ref: stable-1.5
 
       - name: Checkout code
         uses: actions/checkout@v2
