@@ -4,7 +4,7 @@ set +x
 # WARNING: this script is used by the GitHub Actions automation and isn't necessarily designed to be consumed directly.
 
 # set defaults that can be overridden
-INSPECTION_TAG=${INSPECTION_TAG:-latest}
+INSPECTION_TAG=${INSPECTION_TAG:-master}
 BUNDLE_TAG=${BUNDLE_TAG:-nightly-head}
 SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
