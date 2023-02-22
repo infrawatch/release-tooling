@@ -36,19 +36,19 @@ jobs:
         run: sudo mv opm /usr/local/bin
 
       - name: Get Smart Gateway Operator
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: infrawatch/smart-gateway-operator
           path: smart-gateway-operator
 
       - name: Get Service Telemetry Operator
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: infrawatch/service-telemetry-operator
           path: service-telemetry-operator
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: release-automation
 
@@ -90,21 +90,21 @@ jobs:
         run: sudo mv opm /usr/local/bin
 
       - name: Get Smart Gateway Operator
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: infrawatch/smart-gateway-operator
           path: smart-gateway-operator
           ref: stable-1.5
 
       - name: Get Service Telemetry Operator
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: infrawatch/service-telemetry-operator
           path: service-telemetry-operator
           ref: stable-1.5
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: release-automation
 
