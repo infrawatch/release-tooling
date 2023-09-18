@@ -4,7 +4,8 @@ set +x
 # WARNING: this script is used by the GitHub Actions automation and isn't necessarily designed to be consumed directly.
 
 # set defaults that can be overridden
-INSPECTION_TAG=${INSPECTION_TAG:-latest}
+IMAGE_TAG=${TAG_FROM:-latest}
+INSPECTION_TAG=${INSPECTION_TAG:-nightly}
 BUNDLE_TAG=${BUNDLE_TAG:-nightly-head}
 SGO_BUNDLE_RESULT_DIR=${SGO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sgo-bundle}
 STO_BUNDLE_RESULT_DIR=${STO_BUNDLE_RESULT_DIR:-${GITHUB_WORKSPACE}/sto-bundle}
@@ -12,6 +13,7 @@ SGO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/smart-gateway-operator-bundle
 STO_BUNDLE_IMAGE_PATH=quay.io/infrawatch-operators/service-telemetry-operator-bundle
 INDEX_IMAGE_PATH=quay.io/infrawatch-operators/infrawatch-catalog
 INDEX_IMAGE_TAG=${INDEX_IMAGE_TAG:-nightly}
+ARTIFACT_IMAGES=${ARTIFACT_IMAGES:-"sg-core sg-bridge prometheus-webhook-snmp service-telemetry-operator smart-gateway-operator"}
 
 echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
 echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
@@ -19,17 +21,25 @@ echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
 # login to quay.io registry so we can push bundles to infrawatch-operators organization
 echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
+# tag existing artifacts for nightly reference
+for IMAGE in ${ARTIFACT_IMAGES}; do
+    skopeo copy "docker://quay.io/infrawatch/${IMAGE}:${IMAGE_TAG}" "docker://quay.io/infrawatch/${IMAGE}:${INSPECTION_TAG}"
+done
+
 # Smart Gateway Operator bundle creation
 
 # -- Get hashes for images so they can be replaced in the bundle manifest for relatedImages
 echo "-- Get Smart Gateway Operator image hash"
 SG_OPERATOR_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/smart-gateway-operator:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
+echo "## Smart gateway operator image hash: ${SG_OPERATOR_IMAGE_HASH}"
 
 echo "-- Get sg-core image hash"
 SG_CORE_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/sg-core:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
+echo "## sg-core image hash: ${SG_CORE_IMAGE_HASH}"
 
 echo "-- Get sg-bridge image hash"
 SG_BRIDGE_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/sg-bridge:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
+echo "## sg-bridge image hhash: ${SG_BRIDGE_IMAGE_HASH}"
 
 echo "-- Create Smart Gateway Operator bundle"
 pushd "${GITHUB_WORKSPACE}/smart-gateway-operator/" || exit
