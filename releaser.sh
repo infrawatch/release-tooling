@@ -21,6 +21,9 @@ echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
 # login to quay.io registry so we can push bundles to infrawatch-operators organization
 echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
+# login to quay.io registry so we can push bundles to infrawatch organization
+echo "${QUAY_INFRAWATCH_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_USERNAME}" --password-stdin quay.io || exit
+
 # tag existing artifacts for nightly reference
 for IMAGE in ${ARTIFACT_IMAGES}; do
     skopeo copy "docker://quay.io/infrawatch/${IMAGE}:${IMAGE_TAG}" "docker://quay.io/infrawatch/${IMAGE}:${INSPECTION_TAG}"
