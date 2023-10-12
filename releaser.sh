@@ -18,9 +18,6 @@ ARTIFACT_IMAGES=${ARTIFACT_IMAGES:-"sg-core sg-bridge prometheus-webhook-snmp se
 echo "SGO result dir: ${SGO_BUNDLE_RESULT_DIR}"
 echo "STO result dir: ${STO_BUNDLE_RESULT_DIR}"
 
-# login to quay.io registry so we can push bundles to infrawatch-operators organization
-echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
-
 # login to quay.io registry so we can push bundles to infrawatch organization
 echo "${QUAY_INFRAWATCH_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_USERNAME}" --password-stdin quay.io || exit
 
@@ -28,6 +25,9 @@ echo "${QUAY_INFRAWATCH_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_USERNAME
 for IMAGE in ${ARTIFACT_IMAGES}; do
     skopeo copy "docker://quay.io/infrawatch/${IMAGE}:${IMAGE_TAG}" "docker://quay.io/infrawatch/${IMAGE}:${INSPECTION_TAG}"
 done
+
+# login to quay.io registry so we can push bundles to infrawatch-operators organization
+echo "${QUAY_INFRAWATCH_OPERATORS_PASSWORD}" | docker login -u="${QUAY_INFRAWATCH_OPERATORS_USERNAME}" --password-stdin quay.io || exit
 
 # Smart Gateway Operator bundle creation
 
@@ -42,7 +42,7 @@ echo "## sg-core image hash: ${SG_CORE_IMAGE_HASH}"
 
 echo "-- Get sg-bridge image hash"
 SG_BRIDGE_IMAGE_HASH=$(skopeo inspect docker://quay.io/infrawatch/sg-bridge:"${INSPECTION_TAG}" | jq -c '.Digest' | sed -e 's/^"//' -e 's/"$//' -)
-echo "## sg-bridge image hhash: ${SG_BRIDGE_IMAGE_HASH}"
+echo "## sg-bridge image hash: ${SG_BRIDGE_IMAGE_HASH}"
 
 echo "-- Create Smart Gateway Operator bundle"
 pushd "${GITHUB_WORKSPACE}/smart-gateway-operator/" || exit
