@@ -97,5 +97,12 @@ STO_BUNDLE_IMAGE_HASH=$(docker push "${STO_BUNDLE_IMAGE_PATH}:${BUNDLE_TAG}" | s
 popd || exit
 
 echo "-- Build and push index image"
-opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" --tag "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit
+# check if a tag already exists
+skopeo inspect --format "{{.Digest}}" "docker://${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" > /dev/null 2>&1
+status=$?
+if [ $status -eq 0 ]; then
+    opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --from-index "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" --tag "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit
+else
+    opm index add --build-tool docker --bundles "${SGO_BUNDLE_IMAGE_PATH}@${SGO_BUNDLE_IMAGE_HASH},${STO_BUNDLE_IMAGE_PATH}@${STO_BUNDLE_IMAGE_HASH}" --tag "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit
+fi
 docker push "${INDEX_IMAGE_PATH}:${INDEX_IMAGE_TAG}" || exit
