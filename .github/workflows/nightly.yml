@@ -60,6 +60,10 @@ jobs:
           QUAY_INFRAWATCH_OPERATORS_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_PASSWORD }}
           QUAY_INFRAWATCH_USERNAME: ${{ secrets.QUAY_INFRAWATCH_USERNAME }}
           QUAY_INFRAWATCH_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_PASSWORD }}
+          IMAGE_TAG: "latest"         # copy workload artifacts FROM this tag
+          INSPECTION_TAG: "nightly"   # copy workload artifacts TO this tag
+          BUNDLE_TAG: "nightly-head"  # create bundles with this tag
+          INDEX_IMAGE_TAG: "nightly"  # create index image with this tag
 
   periodic_release_1_5:
     name: Periodic Release for STF 1.5
@@ -118,6 +122,7 @@ jobs:
           QUAY_INFRAWATCH_OPERATORS_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_OPERATORS_PASSWORD }}
           QUAY_INFRAWATCH_USERNAME: ${{ secrets.QUAY_INFRAWATCH_USERNAME }}
           QUAY_INFRAWATCH_PASSWORD: ${{ secrets.QUAY_INFRAWATCH_PASSWORD }}
-          BUNDLE_TAG: "stable-1.5"
-          INSPECTION_TAG: "stable-1.5"
-          INDEX_IMAGE_TAG: "nightly-1.5"
+          IMAGE_TAG: "stable-1.5"         # copy workload artifacts FROM this tag
+          INSPECTION_TAG: "nightly-1.5"   # copy workload artifacts TO this tag
+          BUNDLE_TAG: "nightly-1.5"       # create bundles with this tag
+          INDEX_IMAGE_TAG: "nightly-1.5"  # create index image with this tag
